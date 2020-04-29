@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View,FlatList} from 'react-native';
 import {ListItem} from 'react-native-elements';
 import { DISHES } from '../shared/dishes';
-
+import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
 
 
 class Menu extends Component {
@@ -18,10 +18,6 @@ class Menu extends Component {
     };
 
     render() {
-
-        
-        
-
     const renderMenuItem =({item,index})=>{
         return(
             <ListItem
