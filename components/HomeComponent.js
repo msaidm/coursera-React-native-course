@@ -7,25 +7,27 @@ import { LEADERS } from '../shared/leaders';
 
 function RenderItem(props) {
     
-    const item = props.item;
-    
-    if (item != null) {
-        return(
-            <Card
-                featuredTitle={item.name}
-                featuredSubtitle={item.designation}
-                image={require('./images/uthappizza.png')}>
-                <Text
-                    style={{margin: 10}}>
-                    {item.description}</Text>
-            </Card>
-        );
-    }
-    else {
-        return(<View></View>);
-    }
+        const item = props.item;
+        
+        if (item != null) {
+            return(
+                <Card
+                    featuredTitle={item.name}
+                    featuredSubtitle={item.designation}
+                    image={require('./images/uthappizza.png')}>
+                    <Text
+                        style={{margin: 10}}>
+                        {item.description}</Text>
+                </Card>
+            );
+        }
+        else {
+            return(<View></View>);
+        }
 }
+
 class Home extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -39,10 +41,6 @@ class Home extends Component {
         title: 'Home',
     };
 
-    static navigationOptions = {
-        title: 'Home'
-    };
-
     render() {
         
         return(
@@ -53,7 +51,6 @@ class Home extends Component {
             </ScrollView>
         );
     }
-
 }
 
 export default Home;
