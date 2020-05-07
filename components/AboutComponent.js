@@ -3,17 +3,19 @@ import { ScrollView, Text, FlatList } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
 import { LEADERS } from '../shared/leaders';
 import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
 
+const mapStateToProps = state => {
+    return {
+      leaders: state.leaders
+    }
+  }
 
  class About extends Component {
+     
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            leaders: LEADERS
-        };
-    }
-
+    
     static navigationOptions = {
         title: 'About Us'
     };
@@ -29,7 +31,7 @@ import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
                         subtitle={item.description}
                         subtitleStyle={{ color: 'grey' }}
                         hideChevron={true}
-                        leftAvatar={{ source: require('./images/alberto.png')}}
+                        leftAvatar={{source: {uri: baseUrl + item.image}}}
                     />
             );
         };
@@ -48,7 +50,7 @@ import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
                 </Card>
                 <Card title='Corporate Leadership'>
                     <FlatList 
-                        data={this.state.leaders}
+                        data={this.props.leaders.leaders}
                         renderItem={renderLeadersItem}
                         keyExtractor={item => item.id.toString()}
                         />
@@ -58,4 +60,4 @@ import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
     }
 }
 
- export default About;
+export default connect(mapStateToProps)(About);
