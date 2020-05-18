@@ -6,6 +6,8 @@ import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { Loading } from './LoadingComponent';
+import * as Animatable from 'react-native-animatable';
+
 
 const mapStateToProps = state => {
     return {
@@ -60,6 +62,7 @@ const mapStateToProps = state => {
         else if (this.props.leaders.errMess) {
             return(
                 <ScrollView>
+                    <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
                    <Card title='Our History'>
                     <Text style={{margin: 5}}>Started in 2010, Ristorante con Fusion quickly established 
                     itself as a culinary icon par excellence in Hong Kong. With its unique brand of world fusion 
@@ -74,12 +77,14 @@ const mapStateToProps = state => {
                         title='Corporate Leadership'>
                         <Text>{this.props.leaders.errMess}</Text>
                     </Card>
+                    </Animatable.View>
                 </ScrollView>
             );
         }
         else {
             return(
                 <ScrollView>
+                    <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
                     <Card title='Our History'>
                     <Text style={{margin: 5}}>Started in 2010, Ristorante con Fusion quickly established 
                     itself as a culinary icon par excellence in Hong Kong. With its unique brand of world fusion 
@@ -98,6 +103,7 @@ const mapStateToProps = state => {
                         keyExtractor={item => item.id.toString()}
                         />
                     </Card>
+                    </Animatable.View>
                 </ScrollView>
             );
         }
