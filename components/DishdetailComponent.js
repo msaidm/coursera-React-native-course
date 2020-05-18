@@ -1,12 +1,11 @@
 import React, { Component } from "react";
-import { Text,View,ScrollView,FlatList,Modal,StyleSheet,Button} from "react-native";
+import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder } from 'react-native';
 import { Card, Icon, Input } from "react-native-elements";
 import { connect } from "react-redux";
 import { baseUrl } from "../shared/baseUrl";
 import { postFavorite, postComment } from "../redux/ActionCreators";
 import { Rating } from "react-native-elements";
 import * as Animatable from 'react-native-animatable';
-
 
 const mapStateToProps = state => {
   return {
@@ -19,45 +18,74 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
   postFavorite: dishId => dispatch(postFavorite(dishId)),
   postComment: (dishId, rating, author, comment) =>
-  dispatch(postComment(dishId, rating, author, comment))
+    dispatch(postComment(dishId, rating, author, comment))
 });
 
 function RenderDish(props) {
   const dish = props.dish;
 
+  const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
+    if ( dx < -200 )
+        return true;
+    else
+        return false;
+}
+
+const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: (e, gestureState) => {
+        return true;
+    },
+    onPanResponderEnd: (e, gestureState) => {
+        console.log("pan responder end", gestureState);
+        if (recognizeDrag(gestureState))
+            Alert.alert(
+                'Add Favorite',
+                'Are you sure you wish to add ' + dish.name + ' to favorite?',
+                [
+                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                {text: 'OK', onPress: () => {props.favorite ? console.log('Already favorite') : props.onPress()}},
+                ],
+                { cancelable: false }
+            );
+
+        return true;
+    }
+})
+
   if (dish != null) {
     return (
-      <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
-      <Card featuredTitle={dish.name} image={{ uri: baseUrl + dish.image }}>
-        <Text style={{ margin: 10 }}>{dish.description}</Text>
-        <View style={styles.icons}>
-          <Icon
-            raised
-            reverse
-            name={props.favorite ? "heart" : "heart-o"}
-            type="font-awesome"
-            color="#f50"
-            onPress={() =>
-              props.favorite
-                ? console.log("Already favorite")
-                : props.onPressFavorite()
-            }
-          />
-          <Icon
-            raised
-            reverse
-            name="pencil"
-            type="font-awesome"
-            color="#512DA8"
-            onPress={props.onPressAddComment}
-          />
-        </View>
-      </Card>
+      <Animatable.View animation="fadeInDown" duration={2000} delay={1000}{...panResponder.panHandlers}>
+        <Card 
+          featuredTitle={dish.name} 
+          image={{ uri: baseUrl + dish.image }}>
+          <Text style={{ margin: 10 }}>
+            {dish.description}
+          </Text>
+          <View style={styles.icons}>
+            <Icon
+              raised
+              reverse
+              name={props.favorite ? "heart" : "heart-o"}
+              type="font-awesome"
+              color="#f50"
+              onPress={() => props.favorite? console.log("Already favorite"): props.onPressFavorite()}
+            />
+            <Icon
+              raised
+              reverse
+              name="pencil"
+              type="font-awesome"
+              color="#512DA8"
+              onPress={props.onPressAddComment}
+            />
+          </View>
+        </Card>
       </Animatable.View>
     );
-  } else {
+  } 
+  else 
     return <View />;
-  }
+  
 }
 
 function RenderComments(props) {
@@ -68,12 +96,12 @@ function RenderComments(props) {
       <View key={index} style={{ margin: 10 }}>
         <Text style={{ fontSize: 14 }}>{item.comment}</Text>
         <Rating
-          imageSize={13}
+          imageSize={10}
           readonly
           startingValue={item.rating}
           style={{ alignItems: "flex-start" }}
         />
-        <Text style={{ fontSize: 14 }}>
+        <Text style={{ fontSize: 10 }}>
           {"-- " + item.author + ", " + item.date}{" "}
         </Text>
       </View>
@@ -82,13 +110,13 @@ function RenderComments(props) {
 
   return (
     <Animatable.View animation="fadeInUp" duration={2000} delay={1000}> 
-    <Card title="Comments">
-      <FlatList
-        data={comments}
-        renderItem={renderCommentItem}
-        keyExtractor={item => item.id.toString()}
-      />
-    </Card>
+      <Card title="Comments">
+        <FlatList
+          data={comments}
+          renderItem={renderCommentItem}
+          keyExtractor={item => item.id.toString()}
+        />
+      </Card>
     </Animatable.View>
   );
 }
@@ -162,9 +190,7 @@ class DishDetail extends Component {
           onPressAddComment={this.toggleModal}
         />
         <RenderComments
-          comments={this.props.comments.comments.filter(
-            comment => comment.dishId === dishId
-          )}
+          comments={this.props.comments.comments.filter(comment => comment.dishId === dishId)}
         />
         <Modal
           animationType={"slide"}
@@ -175,11 +201,11 @@ class DishDetail extends Component {
         >
           <View style={styles.modal}>
             <Rating
-              imageSize={30}
+              imageSize={20}
               startingValue={5}
               showRating
               onFinishRating={this.ratingCompleted}
-              style={{ paddingVertical: 10 }}
+              style={{ paddingVertical: 8 }}
             />
             <Input
               placeholder="Author"
